@@ -1,0 +1,54 @@
+/**
+ * tokens.css — Design tokens (CSS custom properties)
+ * Import this first. Never put selectors here.
+ */
+
+:root {
+  /* ── Surfaces ──────────────────────────────────── */
+  --bg:          #07070f;
+  --surface:     #0d0d1a;
+  --surface-2:   #131328;
+  --border:      rgba(255, 255, 255, 0.07);
+
+  /* ── Brand ─────────────────────────────────────── */
+  --yellow:      #FFD100;
+  --yellow-dim:  rgba(255, 209, 0, 0.12);
+
+  /* ── Severity ───────────────────────────────────── */
+  --red:         #FF2D55;
+  --red-dim:     rgba(255, 45, 85, 0.13);
+  --orange:      #FF6B35;
+  --orange-dim:  rgba(255, 107, 53, 0.12);
+  --amber:       #FFBB00;
+  --amber-dim:   rgba(255, 187, 0, 0.10);
+  --green:       #00D68F;
+  --green-dim:   rgba(0, 214, 143, 0.10);
+
+  /* ── Accent ─────────────────────────────────────── */
+  --blue:        #4D9EFF;
+  --blue-dim:    rgba(77, 158, 255, 0.10);
+
+  /* ── Text ───────────────────────────────────────── */
+  --text:        #E8E8F2;
+  --muted:       #7B7B99;
+
+  /* ── Code ───────────────────────────────────────── */
+  --code-bg:     #0a0a1f;
+
+  /* ── Typography ─────────────────────────────────── */
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-heading: 'Syne', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+
+  /* ── Layout ─────────────────────────────────────── */
+  --nav-h:      64px;
+  --max-w:      1200px;
+  --pad-x:      2rem;
+  --section-y:  7rem;
+
+  /* ── Radii ──────────────────────────────────────── */
+  --r-sm:  4px;
+  --r-md:  8px;
+  --r-lg: 12px;
+}

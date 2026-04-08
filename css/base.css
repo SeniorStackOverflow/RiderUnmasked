@@ -1,0 +1,111 @@
+/**
+ * base.css — Reset, typography, scrollbar, utility classes
+ */
+
+/* ── Reset ──────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--nav-h);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Type scale ─────────────────────────────────── */
+h1, h2 {
+  font-family: var(--font-display);
+  letter-spacing: 0.04em;
+}
+
+h1 {
+  /* Minimum 3.2rem prevents overflow on 320px screens */
+  font-size: clamp(3.2rem, 12vw, 10rem);
+  line-height: 0.88;
+}
+
+h2 {
+  font-size: clamp(2.2rem, 5vw, 4.2rem);
+  line-height: 1;
+}
+
+h3 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  margin-bottom: 1.3rem; /* default; overridden by modifiers */
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+}
+
+/* ── Scrollbar ──────────────────────────────────── */
+::-webkit-scrollbar       { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: #1e1e38; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #2a2a4a; }
+
+/* ── Text colour utilities ──────────────────────── */
+.t-yellow   { color: var(--yellow); }
+.t-muted    { color: var(--muted); }
+.t-text     { color: var(--text); }
+.t-red      { color: var(--red); }
+.t-orange   { color: var(--orange); }
+.t-amber    { color: var(--amber); }
+.t-green    { color: var(--green); }
+.t-blue     { color: var(--blue); }
+.t-red-b    { color: var(--red);    font-weight: 600; }
+.t-green-b  { color: var(--green);  font-weight: 600; }
+
+/* ── Inline code colour overrides ──────────────── */
+code.c-orange { color: var(--orange); }
+code.c-amber  { color: var(--amber); }
+code.c-blue   { color: var(--blue); }
+code.c-green  { color: var(--green); }
+code.c-yellow { color: var(--yellow); }
+code.c-red    { color: var(--red); }
+
+/* ── Spacing utilities ──────────────────────────── */
+.mb-sm  { margin-bottom: 1rem; }
+.mb-md  { margin-bottom: 1.5rem; }
+.mb-lg  { margin-bottom: 2rem; }
+.mb-xl  { margin-bottom: 3rem; }
+.mt-sm  { margin-top: 1rem; }
+.mt-md  { margin-top: 1.5rem; }
+.mt-lg  { margin-top: 2rem; }
+
+/* ── Overflow helper ────────────────────────────── */
+/* Allows child to scroll without blowing out parent */
+.scroll-x {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+
+/* ── Common body paragraph style ────────────────── */
+.body-copy {
+  font-size: 0.87rem;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+/* ── Mono + muted small ─────────────────────────── */
+.mono-sm {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--muted);
+}

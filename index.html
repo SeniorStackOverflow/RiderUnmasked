@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rider Unmasked — Анализ Glovo Rider App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════ NAV -->
+<nav class="nav">
+  <a href="#hero" class="nav__logo">Rider Unmasked</a>
+  <ul class="nav__links">
+    <li><a href="#architecture" class="nav__link">Архитектура</a></li>
+    <li><a href="#auth"         class="nav__link">Auth</a></li>
+    <li><a href="#security"     class="nav__link">Защита</a></li>
+    <li><a href="#location"     class="nav__link">Трекинг</a></li>
+    <li><a href="#delivery"     class="nav__link">Доставка</a></li>
+    <li><a href="#realtime"     class="nav__link">Real-time</a></li>
+    <li><a href="#wallet"       class="nav__link">Кошелёк</a></li>
+    <li><a href="#vulnerabilities" class="nav__link">Уязвимости</a></li>
+  </ul>
+</nav>
+
+<!-- ═══════════════════════════════════════ HERO -->
+<section id="hero" class="hero">
+  <div class="hero__bg"></div>
+  <div class="hero__grid"></div>
+  <div class="hero__scan"></div>
+
+  <div class="hero__content">
+    <p class="hero__label">Reverse Engineering Audit · Android · v4.2614.1</p>
+    <h1 class="hero__title">RIDER<br><span>UNMASKED</span></h1>
+    <p class="hero__subtitle">Полный технический разбор Glovo Rider — архитектура, API endpoints, система безопасности, слежение за местоположением и уязвимости, найденные в реальном коде приложения.</p>
+    <div class="hero__meta">
+      <div>
+        <p class="hero__meta-label">Приложение</p>
+        <p class="hero__meta-value">com.logistics.rider.glovo</p>
+      </div>
+      <div>
+        <p class="hero__meta-label">Версия</p>
+        <p class="hero__meta-value">v4.2614.1 (build 1210)</p>
+      </div>
+      <div>
+        <p class="hero__meta-label">Классов в APK</p>
+        <p class="hero__meta-value">29 540</p>
+      </div>
+      <div>
+        <p class="hero__meta-label">Target SDK</p>
+        <p class="hero__meta-value">min 28 · target 35</p>
+      </div>
+      <div>
+        <p class="hero__meta-label">Уязвимостей</p>
+        <p class="hero__meta-value t-red">26 (2 critical)</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ ARCHITECTURE -->
+<section id="architecture" class="section">
+  <div class="container">
+
+    <div class="section-head reveal">
+      <p class="section-label">01 — Architecture</p>
+      <div class="section-head__row">
+        <h2>Архитектура<br>приложения</h2>
+        <div class="section-head__line"></div>
+      </div>
+    </div>
+
+    <div class="two-col mb-xl reveal">
+      <div class="card">
+        <p class="module-card__name" style="font-size:.9rem;margin-bottom:.7rem;">📦 com.foodora.courier</p>
+        <p class="card__body mb-sm">Legacy-оболочка — исторический пакет эпохи Foodora (до ребрендинга в Glovo)</p>
+        <div class="sdk-grid">
+          <span class="sdk-tag">app</span><span class="sdk-tag">base</span><span class="sdk-tag">legacy</span>
+          <span class="sdk-tag">main</span><span class="sdk-tag">push</span><span class="sdk-tag">rooster</span>
+        </div>
+      </div>
+      <div class="card card--yellow">
+        <p class="module-card__name" style="font-size:.9rem;margin-bottom:.7rem;">⚡ com.roadrunner</p>
+        <p class="card__body mb-sm">Современные модули — чистая архитектура (Clean Architecture) с разделением по доменам</p>
+        <p class="mono-sm">auth · delivery · location · wallet · chat · realtime · map · …</p>
+      </div>
+    </div>
+
+    <div class="reveal mb-xl">
+      <h3>Модули com.roadrunner</h3>
+      <div class="module-grid">
+        <div class="module-card"><p class="module-card__name">Auth &amp; Security</p><p class="module-card__desc">auth, login, twofa, nafath, biometrics, face, liveness, secure</p></div>
+        <div class="module-card"><p class="module-card__name">Delivery</p><p class="module-card__desc">delivery, order, ontheway, recentdeliveries, startworking, startingarea</p></div>
+        <div class="module-card"><p class="module-card__name">Location</p><p class="module-card__desc">location, map, heatmap</p></div>
+        <div class="module-card"><p class="module-card__name">Earnings</p><p class="module-card__desc">wallet, cashout, opportunities, freelancing</p></div>
+        <div class="module-card"><p class="module-card__name">Communications</p><p class="module-card__desc">chat, customerchat, notifications, push, realtime</p></div>
+        <div class="module-card"><p class="module-card__name">Account</p><p class="module-card__desc">rider, user, settings, sidemenu, country</p></div>
+        <div class="module-card"><p class="module-card__name">Real-time</p><p class="module-card__desc">realtime, remoteconfig, sessionconfig</p></div>
+      </div>
+    </div>
+
+    <div class="reveal">
+      <h3>Сторонние SDK</h3>
+      <div class="sdk-grid">
+        <span class="sdk-tag">Retrofit2</span><span class="sdk-tag">OkHttp3</span>
+        <span class="sdk-tag">Mapbox (15 модулей)</span><span class="sdk-tag">Braze</span>
+        <span class="sdk-tag">Freshchat</span><span class="sdk-tag">Adjust</span>
+        <span class="sdk-tag">Sentiance SDK</span><span class="sdk-tag">Incognia (2 193 класса)</span>
+        <span class="sdk-tag">Dagger</span><span class="sdk-tag">Coil3</span>
+        <span class="sdk-tag">RootBeer (scottyab)</span><span class="sdk-tag">Firebase</span>
+        <span class="sdk-tag">Huawei HMS</span><span class="sdk-tag">Socket.IO v3</span>
+        <span class="sdk-tag">Room DB</span><span class="sdk-tag">WorkManager</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ AUTH -->
+<section id="auth" class="section section--alt">
+  <div class="container">
+
+    <div class="section-head reveal">
+      <p class="section-label">02 — Authentication</p>
+      <div class="section-head__row">
+        <h2>Авторизация<br>&amp; сессии</h2>
+        <div class="section-head__line"></div>
+      </div>
+    </div>
+
+    <div class="two-col">
+
+      <div class="reveal">
+        <h3>Основной поток входа</h3>
+        <div class="state-machine">
+          <div class="state-node state-node--done">
+            <div><p class="state-node__name">POST /auth</p><p class="state-node__desc">email + пароль → access_token + refresh_token</p></div>
+          </div>
+          <div class="state-node state-node--done">
+            <div><p class="state-node__name">2FA Trigger</p><p class="state-node__desc">POST /auth/2fa/trigger → SMS или email код</p></div>
+          </div>
+          <div class="state-node state-node--done">
+            <div><p class="state-node__name">2FA Verify</p><p class="state-node__desc">POST /auth/2fa/verify · InvalidCode | TooManyAttempts | InvalidFlow</p></div>
+          </div>
+          <div class="state-node state-node--done">
+            <div><p class="state-node__name">Токены сохранены</p><p class="state-node__desc">EncryptedSharedPreferences (Android Keystore)</p></div>
+          </div>
+          <div class="state-node state-node--done">
+            <div><p class="state-node__name">401 → Refresh</p><p class="state-node__desc">POST /auth/refresh_token → retry original request</p></div>
+          </div>
+          <div class="state-node state-node--final">
+            <div><p class="state-node__name state-node__name--green">PUT /auth/logout</p><p class="state-node__desc">cancel coroutines → finish activities → clear tokens</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal reveal--d1">
+        <h3>API Endpoints /api/iam-login/</h3>
+        <div class="code-block mb-md"><span class="ep">POST</span>  /api/iam-login/v2/auth
+<span class="ep">POST</span>  /api/iam-login/v2/auth/2fa/trigger
+<span class="ep">POST</span>  /api/iam-login/v2/auth/2fa/verify
+<span class="ep">POST</span>  /api/iam-login/v2/auth/magic_link/generate
+<span class="ep">POST</span>  /api/iam-login/v2/auth/magic_link/verify
+<span class="ep">POST</span>  /api/iam-login/v2/auth/refresh_token
+<span class="ep">PUT</span>   /api/iam-login/v2/auth/logout
+<span class="ep">PUT</span>   /api/iam-login/users/reset_password
+<span class="ep">PUT</span>   /api/iam-login/users/update_password
+<span class="ep">POST</span>  /api/iam-login/selfie  <span class="comment">← liveness / selfie</span></div>
+
+        <h3 style="font-size:.95rem;">HTTP заголовки каждого запроса</h3>
+        <div class="code-block mb-md">Authorization: Bearer <span class="str">{access_token}</span>
+XX-Request-Token: <span class="str">{request_signature}</span>
+Log-Employee-User: <span class="str">{value}</span></div>
+
+        <div class="card card--orange mt-md">
+          <p class="card__heading card__heading--orange">🇸🇦 Nafath — Saudi National ID</p>
+          <p class="card__body">Backend генерирует сессию → <code class="c-orange">display_code</code> + <code class="c-orange">expires_at</code>
+→ NafathModalFragment (не закрывается)
+→ пользователь сканирует в официальном гос. приложении Nafath
+→ backend получает callback → status: <code class="c-orange">pending → success | failed | expired</code></p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="reveal mt-xl">
+      <h3>Feature Flags авторизации</h3>
+      <div class="detection-grid">
+        <div class="detection-item"><span class="detection-item__icon">🔄</span><div><p class="detection-item__label">IS_SEAMLESS_TOKEN_REFRESH_ENABLED</p><p class="detection-item__tech">Тихое обновление токена на 401</p></div></div>
+        <div class="detection-item"><span class="detection-item__icon">⚙️</span><div><p class="detection-item__label">IS_AUTH_STATE_MACHINE_ENABLED</p><p class="detection-item__tech">Машина состояний при логине</p></div></div>
+        <div class="detection-item"><span class="detection-item__icon">👁️</span><div><p class="detection-item__label">IS_LIVENESS_DETECTION_ENABLED</p><p class="detection-item__tech">Anti-spoofing: движения головы + улыбка</p></div></div>
+        <div class="detection-item"><span class="detection-item__icon">🫆</span><div><p class="detection-item__label">IS_BIOMETRICS_ENABLED</p><p class="detection-item__tech">Вход по отпечатку / лицу</p></div></div>
+        <div class="detection-item"><span class="detection-item__icon">🔀</span><div><p class="detection-item__label">IS_ASYNC_LOGIN_FLOW_ENABLED</p><p class="detection-item__tech">Асинхронный путь авторизации</p></div></div>
+        <div class="detection-item"><span class="detection-item__icon">🔃</span><div><p class="detection-item__label">IS_REFRESH_TOKEN_LOGIC_CHANGE_ENABLED</p><p class="detection-item__tech">Новая стратегия обновления токенов</p></div></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ SECURITY -->
+<section id="security" class="section">
+  <div class="container">
+
+    <div class="section-head reveal">
+      <p class="section-label">03 — Security &amp; Anti-Fraud</p>
+      <div class="section-head__row">
+        <h2>Защита<br>от взлома</h2>
+        <div class="section-head__line"></div>
+      </div>
+    </div>
+
+    <div class="reveal mb-xl">
+      <h3 class="mb-sm">Root / Tamper Detection — 17 проверок</h3>
+      <p class="body-copy mb-lg">Оркестратор <code>C6082cjy.write()</code> запускается <strong class="t-text">один раз</strong> при старте. Три независимых слоя.</p>
+      <div class="detection-grid">
+        <div class="detection-item"><span class="detection-item__icon">📁</span><div><p class="detection-item__label">Root Binaries</p><p class="detection-item__tech">Проверка 11 путей: /sbin/, /system/xbin/...</p></div></div>
+        <div class="detection-item"><span class="detection-item__icon">📦</span><div><p class="detection-item__label">Root Apps</p><p class="detection-item__tech">12 пакетов: Magisk, SuperSU, KingRoot...</p></div></div>
+        <div class="detection-item"><span class="detection-item__icon">🔑</span><div><p class="detection-item__label">Build.TAGS</p><p class="detection-item__tech">test-keys → подписанная тестовая сборка</p></div></div>
+        <div class="detection-item"><span class="detection-item__icon">💻</span><div><p class="detection-item__label">Emulator Check</p><p class="detection-item__tech">Build.HARDWARE: goldfish/ranchu · sdk · generic</p></div></div>
+        <div class="detection-item"><span class="detection-item__icon">⚡</span><div><p class="detection-item__label">su в PATH</p><p class="detection-item__tech">Runtime.exec(["which", "su"])</p></div></div>
+        <div class="detection-item"><span class="detection-item__icon">🖥️</span><div><p class="detection-item__label">System Props</p><p class="detection-item__tech">ro.debuggable=1, ro.secure=0 через getprop</p></div></div>
+        <div class="detection-item"><span class="detection-item__icon">💿</span><div><p class="detection-item__label">Filesystem Mount</p><p class="detection-item__tech">mount → RW на /system, /system/xbin...</p></div></div>
+        <div class="detection-item"><span class="detection-item__icon">🔍</span><div><p class="detection-item__label">Debugger</p><p class="detection-item__tech">Debug.isDebuggerConnected() + FLAG_DEBUGGABLE</p></div></div>
+        <div class="detection-item detection-item--alert"><span class="detection-item__icon">🎯</span><div><p class="detection-item__label detection-item__label--red">Frida Detection</p><p class="detection-item__tech">new ServerSocket(27042) → BindException = Frida running</p></div></div>
+        <div class="detection-item"><span class="detection-item__icon">🔧</span><div><p class="detection-item__label">Native JNI</p><p class="detection-item__tech">loadLibrary("toolChecker") → RootBeerNative.checkForRoot()</p></div></div>
+        <div class="detection-item"><span class="detection-item__icon">🏷️</span><div><p class="detection-item__label">Eng Build</p><p class="detection-item__tech">userdebug + dev-keys в комбинации (C2593avE)</p></div></div>
+        <div class="detection-item"><span class="detection-item__icon">📋</span><div><p class="detection-item__label">Superuser.apk</p><p class="detection-item__tech">Наличие /system/app/Superuser.apk</p></div></div>
+      </div>
+    </div>
+
+    <div class="reveal mb-xl">
+      <div class="card card--blue">
+        <p class="card__heading card__heading--blue">⚠️ Тихое применение (Silent Enforcement)</p>
+        <p class="card__body mb-md">Приложение <strong class="t-text">НЕ блокируется</strong> — нет диалогов, нет System.exit().
+Результат детекции упаковывается в <code class="c-blue">DeviceData</code> и отправляется по <strong class="t-text">3 независимым каналам</strong>:</p>
+        <div class="tag-row" style="margin-top:0;">
+          <span class="sdk-tag sdk-tag--blue">Firebase Crashlytics</span>
+          <span class="sdk-tag sdk-tag--orange">Incognia SDK · sendLoginEvent()</span>
+          <span class="sdk-tag sdk-tag--yellow">POST /courier/device_token</span>
+        </div>
+        <p class="card__body mt-sm">Бэкенд принимает решение — заблокировать, ограничить функциональность или пометить аккаунт. Клиент ни о чём не знает.</p>
+      </div>
+    </div>
+
+    <div class="reveal mb-xl">
+      <h3>Device Token Flow</h3>
+      <p class="body-copy mb-md">«Идентификатор устройства» — это FCM/HMS push-токен, а не аппаратный fingerprint.</p>
+      <div class="flow-row mb-md">
+        <div class="flow-node">HMS / FCM Token<span class="flow-node__sub">получается свежим каждый раз</span></div>
+        <div class="flow-arrow"></div>
+        <div class="flow-node">POST /device_token<span class="flow-node__sub">регистрация при событиях заказа</span></div>
+        <div class="flow-arrow"></div>
+        <div class="flow-node">POST /compare_device_token<span class="flow-node__sub">периодическая проверка</span></div>
+        <div class="flow-arrow"></div>
+        <div class="flow-node flow-node--highlight">{ device_token_status: true | false }</div>
+      </div>
+      <div class="card card--red">
+        <p class="card__body"><span class="t-red-b">Критическая слабость:</span> токен не подписан и не привязан к железу. Скопировав одну строку (FCM token) на другое устройство, проверка <code>compare_device_token</code> вернёт <code class="t-green">true</code>.</p>
+      </div>
+    </div>
+
+    <div class="reveal">
+      <h3 class="mb-sm">Incognia — Платформа антифрода</h3>
+      <p class="body-copy mb-lg"><strong class="t-orange">2 193 класса</strong> — независимая от root-детекции система. Собирает 7 категорий данных.</p>
+
+      <div class="data-categories mb-lg">
+        <div class="data-cat">
+          <p class="data-cat__title">🖥️ Hardware (20+ полей)</p>
+          <div class="data-items"><span class="data-item">BOARD</span><span class="data-item">BOOTLOADER</span><span class="data-item">BRAND</span><span class="data-item">DEVICE</span><span class="data-item">FINGERPRINT</span><span class="data-item">HARDWARE</span><span class="data-item">MODEL</span><span class="data-item">SERIAL</span><span class="data-item">SOC_MODEL</span><span class="data-item">SUPPORTED_ABIS</span></div>
+        </div>
+        <div class="data-cat">
+          <p class="data-cat__title">📡 Network</p>
+          <div class="data-items"><span class="data-item">Cell Tower IDs</span><span class="data-item">WiFi BSSID</span><span class="data-item">WiFi SSID</span><span class="data-item">Все видимые AP</span><span class="data-item">Data roaming</span></div>
+        </div>
+        <div class="data-cat">
+          <p class="data-cat__title">📦 Installed Apps</p>
+          <div class="data-items"><span class="data-item">Полный список</span><span class="data-item">Подписи APK</span><span class="data-item">Разрешения</span><span class="data-item">Checksums (API 31+)</span></div>
+        </div>
+        <div class="data-cat">
+          <p class="data-cat__title">⚙️ System Settings</p>
+          <div class="data-items"><span class="data-item">ADB enabled</span><span class="data-item">HTTP proxy</span><span class="data-item">Font scale</span><span class="data-item">Airplane mode</span></div>
+        </div>
+        <div class="data-cat">
+          <p class="data-cat__title">🔌 Accessibility Services</p>
+          <div class="data-items"><span class="data-item">Установленные</span><span class="data-item">Включённые</span><span class="data-item">AutoInput / MacroDroid</span></div>
+        </div>
+        <div class="data-cat">
+          <p class="data-cat__title">🎛️ Sensors</p>
+          <div class="data-items"><span class="data-item">Все типы</span><span class="data-item">Accelerometer</span><span class="data-item">Gyroscope</span><span class="data-item">Power metadata</span></div>
+        </div>
+      </div>
+
+      <h3 style="font-size:.95rem;" class="mb-sm">Конвейер шифрования данных Incognia</h3>
+      <div class="encrypt-steps">
+        <div class="encrypt-step"><p class="encrypt-step__name">Raw JSON payload</p><p class="encrypt-step__desc">Собранные данные всех 7 категорий</p></div>
+        <div class="encrypt-step"><p class="encrypt-step__name">Deflate compress</p><p class="encrypt-step__desc">Уровень сжатия 5</p></div>
+        <div class="encrypt-step"><p class="encrypt-step__name">AES-256-CBC</p><p class="encrypt-step__desc">Случайный 32-byte ключ + 16-byte IV</p></div>
+        <div class="encrypt-step"><p class="encrypt-step__name">HMAC-SHA256</p><p class="encrypt-step__desc">Подпись шифротекста — защита от подмены</p></div>
+        <div class="encrypt-step"><p class="encrypt-step__name">RSA key wrapping</p><p class="encrypt-step__desc">AES-ключ оборачивается RSA</p></div>
+        <div class="encrypt-step"><p class="encrypt-step__name">Chunked HTTPS POST</p><p class="encrypt-step__desc">256 bytes/chunk · 10s timeout → service2.us.incognia.com/mobile/v4</p></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ LOCATION -->
+<section id="location" class="section section--alt">
+  <div class="container">
+
+    <div class="section-head reveal">
+      <p class="section-label">04 — Location Tracking</p>
+      <div class="section-head__row">
+        <h2>Слежение<br>за локацией</h2>
+        <div class="section-head__line"></div>
+      </div>
+    </div>
+
+    <div class="reveal mb-lg">
+      <p class="body-copy mb-lg">GPS-координаты курьера передаются по <strong class="t-yellow">двум полностью независимым каналам</strong> одновременно.</p>
+      <div class="location-layers">
+        <div class="location-layer">
+          <div><p class="location-layer__name">🟡 Слой 1: Glovo Native</p><p class="location-layer__desc">Пакетная передача, привязанная к состоянию курьера · MaxWaitTimeManager группирует фиксации · Huawei HMS fallback</p></div>
+          <span class="location-layer__endpoint">POST /api/start-working-api/v1/rider_status</span>
+        </div>
+        <div class="location-layer">
+          <div><p class="location-layer__name">🔴 Слой 2: Sentiance SDK</p><p class="location-layer__desc">Always-on, автономный — работает независимо от смены · 500ms автоперезапуск · Отдельный pipeline</p></div>
+          <span class="location-layer__endpoint">https://api.sentiance.com/</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col reveal">
+      <div>
+        <h3>Поля объекта Location</h3>
+        <div class="code-block">{
+  <span class="str">"timestamp"</span>:                 long,
+  <span class="str">"latitude"</span>:                  double,
+  <span class="str">"longitude"</span>:                 double,
+  <span class="str">"horizontal_accuracy"</span>:       float,
+  <span class="str">"vertical_accuracy"</span>:         float,
+  <span class="str">"elevation"</span>:                 double,
+  <span class="str">"direction"</span>:                 float,
+  <span class="str">"speed"</span>:                     float,
+  <span class="str">"speed_centimeter"</span>:          int,
+  <span class="str">"provider"</span>:                  string
+}</div>
+      </div>
+      <div>
+        <h3>Sentiance — что анализируется</h3>
+        <div class="stack mb-md">
+          <div class="card"><p class="module-card__name">CrashDetectionFeature</p><p class="module-card__desc">Обнаружение резкого торможения</p></div>
+          <div class="card"><p class="module-card__name">UserContextFeature</p><p class="module-card__desc">Тип активности: ходьба / езда / стоянка</p></div>
+          <div class="card"><p class="module-card__name">DrivingInsightsFeature</p><p class="module-card__desc">Скорость, торможение, качество вождения в поворотах</p></div>
+          <div class="card"><p class="module-card__name">EventTimelineFeature</p><p class="module-card__desc">Полная история перемещений с временными метками</p></div>
+        </div>
+        <div class="card card--red">
+          <p class="card__body">⚠️ Данные GPS (включая домашний адрес — откуда начинаются смены) передаются в Sentiance и Incognia <strong class="t-red">вне рабочего времени</strong>. Sentiance невозможно остановить без удаления приложения.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ DELIVERY -->
+<section id="delivery" class="section">
+  <div class="container">
+
+    <div class="section-head reveal">
+      <p class="section-label">05 — Delivery Flow</p>
+      <div class="section-head__row">
+        <h2>Жизненный цикл<br>доставки</h2>
+        <div class="section-head__line"></div>
+      </div>
+    </div>
+
+    <div class="sidebar-col reveal">
+
+      <div>
+        <h3>Машина состояний</h3>
+        <div class="state-machine">
+          <div class="state-node"><div><p class="state-node__name state-node__name--muted">DISPATCHED</p><p class="state-node__desc">Заказ назначен системой</p></div></div>
+          <div class="state-node state-node--done"><div><p class="state-node__name">COURIER_NOTIFIED</p><p class="state-node__desc">Push отправлен · таймер принятия запущен</p></div></div>
+          <div class="state-node state-node--done"><div><p class="state-node__name">ACCEPTED</p><p class="state-node__desc">Курьер нажал «Принять»</p></div></div>
+          <div class="state-node state-node--done"><div><p class="state-node__name">NEAR_PICKUP</p><p class="state-node__desc">Геофенс: курьер рядом с рестораном</p></div></div>
+          <div class="state-node state-node--done"><div><p class="state-node__name">PICKED_UP</p><p class="state-node__desc">Задача: QR / PIN / фото</p></div></div>
+          <div class="state-node state-node--done"><div><p class="state-node__name">LEFT_PICKUP</p><p class="state-node__desc">Курьер выехал к получателю</p></div></div>
+          <div class="state-node state-node--done"><div><p class="state-node__name">NEAR_DROPOFF</p><p class="state-node__desc">Геофенс: курьер рядом с адресом</p></div></div>
+          <div class="state-node state-node--final"><div><p class="state-node__name state-node__name--green">DELIVERED ✓</p><p class="state-node__desc">Подпись / фото / PIN подтверждены</p></div></div>
+        </div>
+      </div>
+
+      <div>
+        <h3>Данные предложения заказа</h3>
+        <div class="code-block mb-md">StateV3$AcceptData {
+  orderId,
+  vendor   { name, address, location }
+  customer { name, phone }
+  dropoff  { address, delivery_notes }
+  items[]  { name, quantity, price, extras[] }
+  earnings { <span class="str">base, boost, multiplier</span> }
+  payment  { method: <span class="kw">CARD | CASH | WALLET</span>,
+             amount, isPrepaid }
+}</div>
+
+        <h3 style="font-size:.95rem;">API Endpoints</h3>
+        <div class="code-block mb-md"><span class="ep">POST</span> /api/delivery-flow/v1/state
+<span class="ep">POST</span> /api/delivery-flow/v1/deliveries/{id}/tasks
+<span class="ep">PUT</span>  /api/delivery-flow/v1/route-preview
+<span class="ep">PUT</span>  /api/delivery-flow/v1/deliveries/{id}/change/transfer
+<span class="ep">POST</span> /api/delivery-flow/v1/deliveries/{id}/proxy-phone</div>
+
+        <h3 style="font-size:.95rem;">Типы задач подтверждения (один endpoint)</h3>
+        <div class="two-col two-col--xs">
+          <div class="detection-item"><span class="detection-item__icon">📷</span><div><p class="detection-item__label">QR-код</p></div></div>
+          <div class="detection-item"><span class="detection-item__icon">🔢</span><div><p class="detection-item__label">PIN (хешируется)</p></div></div>
+          <div class="detection-item"><span class="detection-item__icon">📸</span><div><p class="detection-item__label">Фото-подтверждение</p></div></div>
+          <div class="detection-item"><span class="detection-item__icon">✍️</span><div><p class="detection-item__label">Цифровая подпись</p></div></div>
+          <div class="detection-item"><span class="detection-item__icon">💵</span><div><p class="detection-item__label">Cash-on-Delivery</p></div></div>
+          <div class="detection-item"><span class="detection-item__icon">📞</span><div><p class="detection-item__label">Proxy Phone Call</p></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ REALTIME -->
+<section id="realtime" class="section section--alt">
+  <div class="container">
+
+    <div class="section-head reveal">
+      <p class="section-label">06 — Real-time Communications</p>
+      <div class="section-head__row">
+        <h2>Real-time<br>коммуникации</h2>
+        <div class="section-head__line"></div>
+      </div>
+    </div>
+
+    <div class="reveal mb-xl">
+      <div class="three-col-center mb-lg">
+        <div class="rt-box"><p class="rt-box__title">Backend Dispatcher</p><p class="rt-box__sub">emit("server:delivery_updated", …)</p></div>
+        <div class="rt-connector">
+          <span class="rt-connector__label t-yellow">PRIMARY</span>
+          <div class="rt-connector__line"></div>
+          <span class="rt-connector__label t-muted">Socket.IO v3 (wss://)</span>
+          <div class="rt-connector__sep"></div>
+          <span class="rt-connector__label t-muted">FCM / HMS (fallback)</span>
+        </div>
+        <div class="rt-box"><p class="rt-box__title">Glovo Rider App</p><p class="rt-box__sub">Kotlin Flow → Delivery State → UI</p></div>
+      </div>
+    </div>
+
+    <div class="two-col reveal">
+      <div>
+        <h3>Сообщение server:delivery_updated</h3>
+        <div class="code-block mb-lg">{
+  <span class="str">"metadata"</span>: {
+    <span class="str">"eventType"</span>: <span class="kw">"delivery_updated"</span>,
+    <span class="str">"source"</span>:    <span class="kw">"dispatcher"</span>,
+    <span class="str">"version"</span>:   <span class="kw">"1.0"</span>
+  },
+  <span class="str">"payload"</span>: {
+    <span class="str">"orderCode"</span>:   <span class="kw">"ABC123"</span>,
+    <span class="str">"deliveryId"</span>: 12345
+  }
+}</div>
+
+        <h3 style="font-size:.95rem;">Connection States</h3>
+        <div class="flow-row">
+          <div class="flow-node">IDLE</div>
+          <div class="flow-arrow"></div>
+          <div class="flow-node">CONNECTING</div>
+          <div class="flow-arrow"></div>
+          <div class="flow-node flow-node--highlight">CONNECTED</div>
+          <div class="flow-arrow"></div>
+          <div class="flow-node">DISCONNECTED</div>
+        </div>
+      </div>
+
+      <div>
+        <h3>Reconnect: Exponential Backoff</h3>
+        <div class="backoff mb-md">
+          <div class="backoff-row"><span class="backoff__label">attempt 1</span><div class="backoff__bar backoff__bar--yellow" style="--w:18px"></div><span class="backoff__time backoff__time--yellow">1s</span></div>
+          <div class="backoff-row"><span class="backoff__label">attempt 2</span><div class="backoff__bar backoff__bar--yellow" style="--w:36px"></div><span class="backoff__time backoff__time--yellow">2s</span></div>
+          <div class="backoff-row"><span class="backoff__label">attempt 3</span><div class="backoff__bar backoff__bar--yellow" style="--w:70px"></div><span class="backoff__time backoff__time--yellow">4s</span></div>
+          <div class="backoff-row"><span class="backoff__label">attempt 4</span><div class="backoff__bar backoff__bar--orange" style="--w:110px"></div><span class="backoff__time backoff__time--orange">8s</span></div>
+          <div class="backoff-row"><span class="backoff__label">attempt 5</span><div class="backoff__bar backoff__bar--orange" style="--w:155px"></div><span class="backoff__time backoff__time--orange">16s</span></div>
+          <div class="backoff-row"><span class="backoff__label">attempt 6</span><div class="backoff__bar backoff__bar--red"    style="--w:200px"></div><span class="backoff__time backoff__time--red">32s → stop</span></div>
+        </div>
+        <p class="body-copy mb-md">Offline: опрос ConnectivityManager каждые <strong class="t-text">2 секунды</strong>, переподключение сразу при возврате сети.</p>
+        <div class="card card--amber">
+          <p class="card__heading card__heading--amber">FCM Deduplication</p>
+          <p class="card__body">Дедупликация только последних <strong class="t-amber">10 message ID</strong> в памяти. Сбрасывается при перезапуске. Уязвим к replay-атаке с задержкой.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ MAPBOX -->
+<section class="section">
+  <div class="container">
+
+    <div class="section-head reveal">
+      <p class="section-label">06b — Navigation</p>
+      <div class="section-head__row">
+        <h2>Навигация<br>&amp; Mapbox</h2>
+        <div class="section-head__line"></div>
+      </div>
+    </div>
+
+    <div class="two-col reveal">
+      <div>
+        <div class="card card--blue mb-md">
+          <p class="card__heading card__heading--blue">⚡ Ключевая находка</p>
+          <p class="card__body">Расчёт маршрутов делается <strong class="t-text">НЕ через Mapbox Directions</strong>. Glovo использует собственный бэкенд с <strong class="t-text">Naver</strong> (корейский провайдер). Mapbox — только для <em class="t-blue">отображения, навигационного UI и тайлов.</em></p>
+        </div>
+
+        <h3 style="font-size:.95rem;">Цветовая кодировка трафика</h3>
+        <div class="legend">
+          <div class="legend-row"><span class="legend-dot legend-dot--green"></span><span class="legend-label">≥ 50 mph — свободно</span></div>
+          <div class="legend-row"><span class="legend-dot legend-dot--yellow"></span><span class="legend-label">25–50 mph — умеренно</span></div>
+          <div class="legend-row"><span class="legend-dot legend-dot--orange"></span><span class="legend-label">10–25 mph — пробка</span></div>
+          <div class="legend-row"><span class="legend-dot legend-dot--red"></span><span class="legend-label">&lt; 10 mph — серьёзная пробка</span></div>
+        </div>
+      </div>
+
+      <div>
+        <h3>Секреты в strings.xml</h3>
+        <div class="table-scroll">
+          <table class="secrets-table">
+            <thead><tr><th>Secret</th><th>Статус</th></tr></thead>
+            <tbody>
+              <tr><td>google_api_key</td><td class="t-red">Открытый текст ⚠️</td></tr>
+              <tr><td>Firebase DB URL</td><td class="t-red">Открытый текст ⚠️</td></tr>
+              <tr><td>Firebase App ID</td><td class="t-amber">Видимый</td></tr>
+              <tr><td>GCS Bucket</td><td class="t-amber">Видимый</td></tr>
+              <tr><td class="col-key">Git SHA</td><td class="t-muted">Открытый</td></tr>
+              <tr><td>Braze API key</td><td class="t-green">XOR-63 (скрыт)</td></tr>
+              <tr><td>Mapbox token</td><td class="t-amber">XOR-63 (обходится)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card card--red mt-md">
+          <p class="card__body">Mapbox токен «зашифрован» Base64 + XOR константой <code class="t-red">-63</code>. Декодируется 10 строками кода. Google API ключ — полностью открытый текст.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ WALLET -->
+<section id="wallet" class="section section--alt">
+  <div class="container">
+
+    <div class="section-head reveal">
+      <p class="section-label">07 — Wallet &amp; Earnings</p>
+      <div class="section-head__row">
+        <h2>Кошелёк<br>&amp; заработок</h2>
+        <div class="section-head__line"></div>
+      </div>
+    </div>
+
+    <div class="reveal mb-xl">
+      <h3>UI компоненты кошелька (server-driven)</h3>
+      <div class="wallet-grid">
+        <div class="wallet-component"><p class="wallet-component__name">CurrentBalanceComponent</p><p class="wallet-component__desc">Доступно прямо сейчас</p></div>
+        <div class="wallet-component"><p class="wallet-component__name">QueuedBalanceComponent</p><p class="wallet-component__desc">Ожидают расчёта</p></div>
+        <div class="wallet-component"><p class="wallet-component__name">EarningsComponent</p><p class="wallet-component__desc">Общий заработок</p></div>
+        <div class="wallet-component"><p class="wallet-component__name">RecentTransactionsComponent</p><p class="wallet-component__desc">Последние операции</p></div>
+        <div class="wallet-component"><p class="wallet-component__name">CashOutPayOutButtonComponent</p><p class="wallet-component__desc">Кнопка вывода средств</p></div>
+        <div class="wallet-component"><p class="wallet-component__name">WalletWarningMessageComponent</p><p class="wallet-component__desc">Алерты: низкий баланс, расхождения</p></div>
+      </div>
+    </div>
+
+    <div class="two-col reveal">
+      <div>
+        <h3>Поток вывода средств</h3>
+        <div class="state-machine">
+          <div class="state-node state-node--done"><div><p class="state-node__name">Список провайдеров</p><p class="state-node__desc">GET /provider-list?flow=topup</p></div></div>
+          <div class="state-node state-node--done"><div><p class="state-node__name">Требования</p><p class="state-node__desc">GET /wallets/registration/{provider_id}</p></div></div>
+          <div class="state-node state-node--done"><div><p class="state-node__name">Отправить реквизиты</p><p class="state-node__desc">POST /wallets/registration/{provider_id}</p></div></div>
+          <div class="state-node state-node--done"><div><p class="state-node__name">Лимиты &amp; комиссии</p><p class="state-node__desc">POST /wallets/withdraw_info/{provider_id}</p></div></div>
+          <div class="state-node state-node--final"><div><p class="state-node__name state-node__name--green">Выплата</p><p class="state-node__desc">POST /integrations/wallet/{provider_id}/initiate_payment → PENDING → PROCESSING → COMPLETE | FAILED</p></div></div>
+        </div>
+      </div>
+      <div>
+        <h3>Источники заработка</h3>
+        <div class="sdk-grid mb-lg">
+          <span class="sdk-tag">Базовая оплата</span><span class="sdk-tag">Чаевые</span>
+          <span class="sdk-tag">Surge multipliers</span><span class="sdk-tag">Boosts</span>
+          <span class="sdk-tag">Бонусы</span><span class="sdk-tag">Quest rewards</span>
+        </div>
+
+        <h3 style="font-size:.95rem;">Провайдеры выплат</h3>
+        <div class="stack">
+          <div class="detection-item"><span class="detection-item__icon">🏪</span><div><p class="detection-item__label">Seven-Eleven QR</p><p class="detection-item__tech">Наличные в магазинах Японии/Филиппин</p></div></div>
+          <div class="detection-item"><span class="detection-item__icon">🏦</span><div><p class="detection-item__label">Bank Transfer</p><p class="detection-item__tech">IBAN / номер счёта · 1-3 рабочих дня</p></div></div>
+          <div class="detection-item"><span class="detection-item__icon">💳</span><div><p class="detection-item__label">Digital Wallets</p><p class="detection-item__tech">Stripe / Adyen / PayU — мгновенно</p></div></div>
+        </div>
+
+        <div class="card card--amber mt-md">
+          <p class="card__heading card__heading--amber">Cash-on-Delivery Reconciliation</p>
+          <p class="card__body">Собранная наличность ≠ ожидаемой → запись расхождения с полем <code class="c-amber">justification</code> (свободный текст). Хранится в незашифрованной Room DB.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ VULNERABILITIES -->
+<section id="vulnerabilities" class="section">
+  <div class="container">
+
+    <div class="section-head reveal">
+      <p class="section-label">08 — Security Audit</p>
+      <div class="section-head__row">
+        <h2>Уязвимости<br>безопасности</h2>
+        <div class="section-head__line"></div>
+      </div>
+    </div>
+
+    <div class="stats-row reveal">
+      <div class="stat-box stat-box--critical"><p class="stat-box__number" data-target="2">2</p><p class="stat-box__label">Critical</p></div>
+      <div class="stat-box stat-box--high">    <p class="stat-box__number" data-target="9">9</p><p class="stat-box__label">High</p></div>
+      <div class="stat-box stat-box--medium">  <p class="stat-box__number" data-target="11">11</p><p class="stat-box__label">Medium</p></div>
+      <div class="stat-box stat-box--low">     <p class="stat-box__number" data-target="4">4</p><p class="stat-box__label">Low</p></div>
+    </div>
+
+    <div class="filter-group reveal">
+      <button class="filter-btn is-active" data-filter="all">Все (26)</button>
+      <button class="filter-btn" data-filter="critical">Critical (2)</button>
+      <button class="filter-btn" data-filter="high">High (9)</button>
+      <button class="filter-btn" data-filter="medium">Medium (11)</button>
+      <button class="filter-btn" data-filter="low">Low (4)</button>
+    </div>
+
+    <div class="vuln-grid reveal" id="vulnGrid">
+
+      <div class="vuln-card vuln-card--critical" data-severity="critical">
+        <span class="badge badge--critical">Critical</span>
+        <p class="vuln-card__title">Нет Certificate Pinning для Glovo API</p>
+        <p class="vuln-card__desc">Нет CertificatePinner, кастомного X509TrustManager, нет &lt;pin-set&gt; в network_security_config.xml. Burp Suite работает из коробки без root. Incognia пиннинг реализует — Glovo нет.</p>
+        <div class="vuln-card__fix"><p class="vuln-card__fix-label">Исправление</p>OkHttp CertificatePinner с SHA-256 хешами для всех production доменов + явный &lt;pin-set&gt; в network_security_config.xml</div>
+      </div>
+
+      <div class="vuln-card vuln-card--critical" data-severity="critical">
+        <span class="badge badge--critical">Critical</span>
+        <p class="vuln-card__title">FCM токен как device identity — не привязан к железу</p>
+        <p class="vuln-card__desc">«Fingerprint устройства» — FCM push-токен. Его можно скопировать и воспроизвести. compare_device_token сравнивает только строки — без криптографической привязки к hardware.</p>
+        <div class="vuln-card__fix"><p class="vuln-card__fix-label">Исправление</p>Android Keystore attestation: ключевая пара в secure element, подписывать серверный challenge</div>
+      </div>
+
+      <div class="vuln-card vuln-card--high" data-severity="high">
+        <span class="badge badge--high">High</span>
+        <p class="vuln-card__title">Root Detection полностью обходится Magisk DenyList + LSPosed</p>
+        <p class="vuln-card__desc">Все 17 Java-проверок тривиально обходятся Magisk + LSPosed. Каждый метод детекции можно захукать и вернуть чистый результат.</p>
+        <div class="vuln-card__fix"><p class="vuln-card__fix-label">Исправление</p>Перенести критические проверки в NDK. Интегрировать Play Integrity API (hardware-backed attestation)</div>
+      </div>
+
+      <div class="vuln-card vuln-card--high" data-severity="high">
+        <span class="badge badge--high">High</span>
+        <p class="vuln-card__title">Frida обнаруживается только на порту 27042</p>
+        <p class="vuln-card__desc">frida-server запускается на любом порту: <code>frida-server -l 0.0.0.0:12345</code>. Детекция через new ServerSocket(27042) немедленно становится неэффективной.</p>
+        <div class="vuln-card__fix"><p class="vuln-card__fix-label">Исправление</p>Сканировать /proc/net/tcp, /proc/self/maps для frida-agent, /proc/self/task/*/comm</div>
+      </div>
+
+      <div class="vuln-card vuln-card--high" data-severity="high">
+        <span class="badge badge--high">High</span>
+        <p class="vuln-card__title">SMS 2FA — уязвим к SIM swap и SS7</p>
+        <p class="vuln-card__desc">SIM swap или SS7-перехват позволяет получить код без физического доступа к телефону. Полный доступ к аккаунту включая кошелёк.</p>
+        <div class="vuln-card__fix"><p class="vuln-card__fix-label">Исправление</p>Добавить TOTP (RFC 6238) как альтернативу SMS. Rate limiting на trigger endpoint (per-IP + per-account)</div>
+      </div>
+
+      <div class="vuln-card vuln-card--high" data-severity="high">
+        <span class="badge badge--high">High</span>
+        <p class="vuln-card__title">Access token не привязан к устройству</p>
+        <p class="vuln-card__desc">Токены в EncryptedSharedPreferences без hardware attestation. Украденный токен с root-устройства работает на любом другом — нет серверной проверки привязки.</p>
+        <div class="vuln-card__fix"><p class="vuln-card__fix-label">Исправление</p>Keystore attestation для привязки токена. Верификация device binding на сервере при каждом запросе</div>
+      </div>
+
+      <div class="vuln-card vuln-card--high" data-severity="high">
+        <span class="badge badge--high">High</span>
+        <p class="vuln-card__title">Socket.IO URL из Firebase Remote Config — подмена возможна</p>
+        <p class="vuln-card__desc">Компрометация Firebase → изменение realtime_connection_url → все курьеры подключаются к вредоносному серверу → фейковые заказы, DoS.</p>
+        <div class="vuln-card__fix"><p class="vuln-card__fix-label">Исправление</p>Хардкодить или криптографически подписывать список допустимых Socket.IO хостов</div>
+      </div>
+
+      <div class="vuln-card vuln-card--high" data-severity="high">
+        <span class="badge badge--high">High</span>
+        <p class="vuln-card__title">Wallet Room DB не зашифрована</p>
+        <p class="vuln-card__desc">balance, cashoutAmount, payout, history — в незашифрованном SQLite. На root-устройстве читается через adb shell напрямую.</p>
+        <div class="vuln-card__fix"><p class="vuln-card__fix-label">Исправление</p>SQLCipher для Room DB. Ключ в Android Keystore (hardware-backed)</div>
+      </div>
+
+      <div class="vuln-card vuln-card--high" data-severity="high">
+        <span class="badge badge--high">High</span>
+        <p class="vuln-card__title">Перенос заказа — возможный угон с заработком</p>
+        <p class="vuln-card__desc">PUT /deliveries/{id}/change/transfer — неясно верифицирует ли сервер что инициатор является текущим владельцем. Потенциальный угон заказа и заработка.</p>
+        <div class="vuln-card__fix"><p class="vuln-card__fix-label">Исправление</p>Строгая серверная проверка владения. Подтверждение от получателя. Аудит-лог переводов</div>
+      </div>
+
+      <div class="vuln-card vuln-card--high" data-severity="high">
+        <span class="badge badge--high">High</span>
+        <p class="vuln-card__title">GPS данных двум сторонним компаниям вне смены</p>
+        <p class="vuln-card__desc">Точные координаты (включая домашний адрес) передаются в Sentiance и Incognia без уведомления пользователя. Sentiance строит поведенческий профиль вне задач Glovo.</p>
+        <div class="vuln-card__fix"><p class="vuln-card__fix-label">Исправление</p>Ограничить GPS передачу строго периодом активной смены</div>
+      </div>
+
+      <div class="vuln-card vuln-card--high" data-severity="high">
+        <span class="badge badge--high">High</span>
+        <p class="vuln-card__title">Mapbox токен: Base64 + XOR -63 (тривиально декодируется)</p>
+        <p class="vuln-card__desc">10 строк кода получают валидный токен. Позволяет делать неограниченные запросы Maps/Geocoding за счёт Glovo.</p>
+        <div class="vuln-card__fix"><p class="vuln-card__fix-label">Исправление</p>URL allowlist в Mapbox Dashboard (разрешить только package name Glovo). Ротация токена</div>
+      </div>
+
+      <div class="vuln-card vuln-card--medium" data-severity="medium">
+        <span class="badge badge--medium">Medium</span>
+        <p class="vuln-card__title">Полный список приложений → Incognia (3rd party)</p>
+        <p class="vuln-card__desc">getInstalledPackages() — все приложения включая банковские, медицинские, политические. Без согласия пользователя. Нарушение GDPR/CCPA.</p>
+        <div class="vuln-card__fix"><p class="vuln-card__fix-label">Исправление</p>Передавать только security-relevant пакеты. Явное согласие пользователя</div>
+      </div>
+
+      <div class="vuln-card vuln-card--medium" data-severity="medium">
+        <span class="badge badge--medium">Medium</span>
+        <p class="vuln-card__title">Root detection — один раз при старте</p>
+        <p class="vuln-card__desc">Если Frida подключается после запуска через ADB — повторной детекции нет. Открытое окно для манипуляций с заказами и кошельком.</p>
+        <div class="vuln-card__fix"><p class="vuln-card__fix-label">Исправление</p>Повторять периодически или перед критическими операциями (принятие заказа, cashout)</div>
+      </div>
+
+      <div class="vuln-card vuln-card--medium" data-severity="medium">
+        <span class="badge badge--medium">Medium</span>
+        <p class="vuln-card__title">Тихое enforcement = итерационная петля для атакующего</p>
+        <p class="vuln-card__desc">Нет уведомлений о детекции. Атакующий методично уточняет обход, наблюдая за изменениями в доступности заказов.</p>
+        <div class="vuln-card__fix"><p class="vuln-card__fix-label">Исправление</p>«Canary» ответы — намеренно изменённые для помеченных устройств вместо тишины</div>
+      </div>
+
+      <div class="vuln-card vuln-card--medium" data-severity="medium">
+        <span class="badge badge--medium">Medium</span>
+        <p class="vuln-card__title">PIN хеширование — неизвестный алгоритм</p>
+        <p class="vuln-card__desc">PIN «хешируется локально», но алгоритм не идентифицирован. Если MD5/SHA-1 без соли — брутфорс 4-значного PIN тривиален (10 000 комбинаций).</p>
+        <div class="vuln-card__fix"><p class="vuln-card__fix-label">Исправление</p>HMAC-SHA256 с server-generated nonce (challenge-response)</div>
+      </div>
+
+      <div class="vuln-card vuln-card--medium" data-severity="medium">
+        <span class="badge badge--medium">Medium</span>
+        <p class="vuln-card__title">Auto-accept без дополнительной аутентификации</p>
+        <p class="vuln-card__desc">Режим активируется одним GET запросом. При компрометации аккаунта атакующий включает auto-accept → курьер получает нежелательные заказы.</p>
+        <div class="vuln-card__fix"><p class="vuln-card__fix-label">Исправление</p>Биометрия или пароль для включения auto-accept. Push при активации</div>
+      </div>
+
+      <div class="vuln-card vuln-card--medium" data-severity="medium">
+        <span class="badge badge--medium">Medium</span>
+        <p class="vuln-card__title">Magic Link — нет видимого TTL на клиенте</p>
+        <p class="vuln-card__desc">Клиент не отображает время истечения и не инвалидирует предыдущие ссылки. Фишинговая атака имеет большое окно.</p>
+        <div class="vuln-card__fix"><p class="vuln-card__fix-label">Исправление</p>TTL ≤ 15 минут. Одноразовое. Инвалидация при повторном запросе</div>
+      </div>
+
+      <div class="vuln-card vuln-card--medium" data-severity="medium">
+        <span class="badge badge--medium">Medium</span>
+        <p class="vuln-card__title">Биометрия — fallback на слабый PIN устройства</p>
+        <p class="vuln-card__desc">Android Biometric API допускает fallback на device PIN/password (может быть 1234). Обход биометрии при физическом доступе.</p>
+        <div class="vuln-card__fix"><p class="vuln-card__fix-label">Исправление</p>setNegativeButtonText вместо device credential fallback</div>
+      </div>
+
+      <div class="vuln-card vuln-card--medium" data-severity="medium">
+        <span class="badge badge--medium">Medium</span>
+        <p class="vuln-card__title">Foreground Service — пользователь не может остановить трекинг</p>
+        <p class="vuln-card__desc">Sentiance сервис перезапускается через 500ms при любом завершении. Нарушение GDPR Article 21 — права на возражение против обработки.</p>
+        <div class="vuln-card__fix"><p class="vuln-card__fix-label">Исправление</p>Пользовательский контроль трекинга. Остановка вне активных смен</div>
+      </div>
+
+      <div class="vuln-card vuln-card--medium" data-severity="medium">
+        <span class="badge badge--medium">Medium</span>
+        <p class="vuln-card__title">Proxy Phone — параметр callee может не валидироваться</p>
+        <p class="vuln-card__desc">При слабой серверной валидации — звонок на произвольный номер через инфраструктуру Glovo за их счёт.</p>
+        <div class="vuln-card__fix"><p class="vuln-card__fix-label">Исправление</p>Принимать только зарегистрированный номер клиента для данного delivery_id</div>
+      </div>
+
+      <div class="vuln-card vuln-card--medium" data-severity="medium">
+        <span class="badge badge--medium">Medium</span>
+        <p class="vuln-card__title">FCM дедупликация — только 10 сообщений в памяти</p>
+        <p class="vuln-card__desc">Replay-атака с задержкой (после 11+ новых сообщений) пройдёт дедупликацию. Сбрасывается при перезапуске.</p>
+        <div class="vuln-card__fix"><p class="vuln-card__fix-label">Исправление</p>Дедупликация по timestamp+ID, хранение в Room DB</div>
+      </div>
+
+      <div class="vuln-card vuln-card--medium" data-severity="medium">
+        <span class="badge badge--medium">Medium</span>
+        <p class="vuln-card__title">COD расхождения — поле justification без валидации</p>
+        <p class="vuln-card__desc">Мошеннический курьер может систематически занижать actualAmount с произвольным обоснованием.</p>
+        <div class="vuln-card__fix"><p class="vuln-card__fix-label">Исправление</p>Автофлагировка аккаунтов с частыми расхождениями. Ручной ревью для крупных сумм</div>
+      </div>
+
+      <div class="vuln-card vuln-card--low" data-severity="low">
+        <span class="badge badge--low">Low</span>
+        <p class="vuln-card__title">Bearer token в Socket.IO handshake</p>
+        <p class="vuln-card__desc">В некоторых реализациях может попасть в URL query string и в логи серверов/прокси/CDN.</p>
+        <div class="vuln-card__fix"><p class="vuln-card__fix-label">Исправление</p>Токен всегда в header. Ротация Socket.IO auth токена при каждом reconnect</div>
+      </div>
+
+      <div class="vuln-card vuln-card--low" data-severity="low">
+        <span class="badge badge--low">Low</span>
+        <p class="vuln-card__title">Incognia endpoint — обфускация, не шифрование</p>
+        <p class="vuln-card__desc">Frida hook на OJe.Y() тривиально извлекает URL в runtime. Расшифрованный: https://service2.us.incognia.com/mobile/v4</p>
+        <div class="vuln-card__fix"><p class="vuln-card__fix-label">Исправление</p>Полагаться на криптографию payload (AES+RSA+HMAC), а не обфускацию URL</div>
+      </div>
+
+      <div class="vuln-card vuln-card--low" data-severity="low">
+        <span class="badge badge--low">Low</span>
+        <p class="vuln-card__title">Нет idempotency key при принятии заказа</p>
+        <p class="vuln-card__desc">На медленном соединении два одинаковых запроса принятия могут быть отправлены одновременно.</p>
+        <div class="vuln-card__fix"><p class="vuln-card__fix-label">Исправление</p>Idempotency key в запросе. Деактивировать кнопку до получения ответа сервера</div>
+      </div>
+
+      <div class="vuln-card vuln-card--low" data-severity="low">
+        <span class="badge badge--low">Low</span>
+        <p class="vuln-card__title">Mapbox Telemetry → events.mapbox.com</p>
+        <p class="vuln-card__desc">SDK автоматически отправляет навигационные события и позиции на events.mapbox.com.</p>
+        <div class="vuln-card__fix"><p class="vuln-card__fix-label">Исправление</p>MapboxTelemetry.setUserTelemetryRequestState(false) при инициализации</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ TOP 3 -->
+<section class="section section--alt">
+  <div class="container">
+
+    <div class="section-head reveal">
+      <p class="section-label">09 — Critical Findings</p>
+      <div class="section-head__row">
+        <h2>Топ 3 критических<br>проблемы</h2>
+        <div class="section-head__line"></div>
+      </div>
+    </div>
+
+    <div class="top3-grid">
+
+      <div class="top3-item reveal">
+        <div class="top3-item__number">01</div>
+        <div>
+          <div class="top3-item__badge"><span class="badge badge--critical">Critical</span></div>
+          <p class="top3-item__title">Нет Certificate Pinning для бэкенда Glovo</p>
+          <p class="top3-item__desc">Единственная уязвимость, которая делает все остальные защиты бессмысленными. Любой пользователь на недоверенной сети теряет все данные — токены, GPS, финансовую информацию — без какого-либо специального инструментария. Достаточно установить CA Burp Suite на устройство. Incognia уже реализует pinning корректно — Glovo собственный API нет.</p>
+          <div class="top3-item__fix">OkHttp CertificatePinner с SHA-256 хешами для всех production доменов Glovo + явный &lt;pin-set&gt; в network_security_config.xml с резервными пинами для ротации</div>
+        </div>
+      </div>
+
+      <div class="top3-item reveal reveal--d1">
+        <div class="top3-item__number">02</div>
+        <div>
+          <div class="top3-item__badge"><span class="badge badge--critical">Critical</span></div>
+          <p class="top3-item__title">FCM токен как device identity без hardware binding</p>
+          <p class="top3-item__desc">Весь механизм compare_device_token — разработанный для предотвращения клонирования аккаунтов и эмуляторного мошенничества — обходится копированием одной строки. Поскольку кошелёк и заработок привязаны к аккаунту, это делает весь клиентский антифрод декоративным.</p>
+          <div class="top3-item__fix">Android Keystore attestation: ключевая пара генерируется в secure element. Сервер отправляет challenge, клиент подписывает — владение ключом доказывает идентичность аппаратного устройства</div>
+        </div>
+      </div>
+
+      <div class="top3-item reveal reveal--d2">
+        <div class="top3-item__number">03</div>
+        <div>
+          <div class="top3-item__badge"><span class="badge badge--high">High</span></div>
+          <p class="top3-item__title">Root Detection полностью обходим на уровне ОС</p>
+          <p class="top3-item__desc">Вся цепочка защиты — 17 техник детекции + Incognia + Sentiance — построена на допущении что Android-среда доверенная. Magisk + DenyList + LSPosed полностью разрушает это допущение. Без Play Integrity API любой мотивированный атакующий работает в полностью прозрачной среде.</p>
+          <div class="top3-item__fix">Интегрировать com.google.android.play.core.integrity.IntegrityManager. Verdict токен в каждый запрос логина и критических транзакций. Для Huawei: HMS App Signing</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ FOOTER -->
+<footer class="footer">
+  <p class="footer__logo">Rider Unmasked</p>
+  <p class="footer__text">
+    Глубокий реверс-инжиниринг и аудит безопасности Glovo Rider v4.2614.1 (build 1210).<br>
+    Данные получены путём декомпиляции XAPK с использованием JADX · 29 540 классов · Android 9–15.<br>
+    Исследование проведено в образовательных целях.
+  </p>
+  <p class="footer__meta">com.logistics.rider.glovo · com.foodora.courier · com.roadrunner</p>
+</footer>
+
+<script src="js/scroll.js" defer></script>
+<script src="js/app.js" defer></script>
+</body>
+</html>
