@@ -19,7 +19,7 @@ The following dates are maintained by the researcher as the disclosure record:
 |---|---:|
 | Research / report completed | **2026-03-15** |
 | Report sent privately to Glovo | **2026-03-18** |
-| Findings known to / acknowledged by company | **2026-03-20** |
+| Company awareness date recorded by researcher | **2026-03-20** |
 | Findings remediated by | **2026-04-02** |
 | Public GitHub repository created | **2026-04-08** |
 
@@ -56,6 +56,6 @@ Private vendor communications are intentionally not published merely to make the
 
 ## Reviewer summary
 
-**Claimed sequence:** research completed → vendor privately notified → vendor aware → remediation → public repository.
+**Claimed sequence:** research completed → vendor privately notified → vendor awareness recorded → remediation → public repository.
 
 **Independently visible sequence:** GitHub repository creation occurred on **2026-04-08**, after the stated remediation date of **2026-04-02**.
